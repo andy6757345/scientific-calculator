@@ -7,21 +7,22 @@ pipeline {
     }
 
     stages {
-        // Stage 1: Checkout code from GitHub
+        // Stage 1: Checkout
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/andy6757345/scientific-calculator'
             }
         }
 
-        // Stage 2: Setup Python virtual environment and install dependencies
+        // Stage 2: Setup Python virtual environment
         stage('Setup Python Env') {
             steps {
                 sh '''
-                python3 -m venv $VENV_PATH
-                source $VENV_PATH/bin/activate
-                pip install --upgrade pip
-                pip install pytest
+                    #!/bin/bash
+                    python3 -m venv $VENV_PATH
+                    . $VENV_PATH/bin/activate
+                    pip install --upgrade pip
+                    pip install pytest
                 '''
             }
         }
@@ -30,8 +31,9 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                source $VENV_PATH/bin/activate
-                pytest tests || echo "No tests found or pytest failed"
+                    #!/bin/bash
+                    . $VENV_PATH/bin/activate
+                    pytest tests || echo "No tests found or pytest failed"
                 '''
             }
         }
