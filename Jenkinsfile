@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "andy3104/scientific-calculator:latest"
+        VENV_PATH = "${WORKSPACE}/venv"
     }
 
     stages {
@@ -13,22 +14,36 @@ pipeline {
             }
         }
 
-        // Stage 2: Run Python tests (optional)
+        // Stage 2: Setup Python virtual environment and install dependencies
+        stage('Setup Python Env') {
+            steps {
+                sh '''
+                python3 -m venv $VENV_PATH
+                source $VENV_PATH/bin/activate
+                pip install --upgrade pip
+                pip install pytest
+                '''
+            }
+        }
+
+        // Stage 3: Run Python tests
         stage('Run Tests') {
             steps {
-                // If you have test files in tests/ folder
-                sh 'pytest tests || echo "No tests found or pytest not installed"'
+                sh '''
+                source $VENV_PATH/bin/activate
+                pytest tests || echo "No tests found or pytest failed"
+                '''
             }
         }
 
-        // Stage 3: Build Docker image
+        // Stage 4: Build Docker image
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE} ."
+                sh "docker build -t ${DOCKER_IMAGE} -f calculator.dockerfile ."
             }
         }
 
-        // Stage 4: Push Docker image to Docker Hub
+        // Stage 5: Push Docker image to Docker Hub
         stage('Push Docker Image') {
             steps {
                 withDockerRegistry([credentialsId: 'dockerhub-andy3104', url: '']) {
