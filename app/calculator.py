@@ -1,4 +1,4 @@
-# app/calculator.py
+# app/calculator.py edit for checking total project working 
 import math
 
 def menu():
