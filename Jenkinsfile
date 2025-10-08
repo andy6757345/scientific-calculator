@@ -21,7 +21,7 @@ pipeline {
                 }
             }
         }
-stage('Push to Docker Hub') {
+        stage('Push to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-id1') {
@@ -31,6 +31,15 @@ stage('Push to Docker Hub') {
                 }
             }
         }
+        stage('Deploy with Ansible') {
+            steps {
+                echo 'Deploying Docker container using Ansible...'
+                sh 'ansible-playbook ansible/playbook.yml'
+    }
+}
+
+      
+
 
     }
     
