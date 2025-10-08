@@ -1,5 +1,7 @@
 - name: Deploy Scientific Calculator
   hosts: local
+  connection:local
+  gather_facts:yes
   tasks:
     - name: Pull latest Docker image
       shell: docker pull andy3104/scientific-calculator:latest
