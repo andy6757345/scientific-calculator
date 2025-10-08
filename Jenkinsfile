@@ -41,7 +41,10 @@ pipeline {
         // Stage 4: Build Docker image
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE} -f calculator.dockerfile ."
+                sh '''
+                    #!/bin/bash
+                    docker build -t ${DOCKER_IMAGE} -f calculator.dockerfile .
+                '''
             }
         }
 
@@ -49,8 +52,17 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
+                    echo "Checking Docker credentials..."
+                    def creds = withCredentials([usernamePassword(credentialsId: 'dockerhub-id', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                        return [user: env.DOCKER_USER, pass: env.DOCKER_PASS]
+                    }
+                    echo "Username from Jenkins credentials: ${creds.user}"
+
                     withDockerRegistry([credentialsId: 'dockerhub-id', url: 'https://index.docker.io/v1/']) {
-                        sh "docker push ${DOCKER_IMAGE}"
+                        sh '''
+                            #!/bin/bash
+                            docker push ${DOCKER_IMAGE}
+                        '''
                     }
                 }
             }
