@@ -47,13 +47,15 @@ pipeline {
 
         // Stage 5: Push Docker image to Docker Hub
         stage('Push Docker Image') {
-            steps {
-                withDockerRegistry([credentialsId: 'dockerhub-id', url: '']) {
-                    sh "docker push ${DOCKER_IMAGE}"
-                }
+    steps {
+        script {
+            // Wrap Docker push inside withDockerRegistry so Jenkins can use your credentials
+            withDockerRegistry([credentialsId: 'dockerhub-id', url: 'https://index.docker.io/v1/']) {
+                sh 'docker push andy3104/scientific-calculator:latest'
             }
         }
     }
+}
 
     post {
         success {
