@@ -24,7 +24,7 @@ def natural_log():
 def power():
     x = float(input("Enter base: "))
     b = float(input("Enter exponent: "))
-    print(f"{x}^{b} = {math.pow(x, b)}")
+    print(f"{x}^{a} = {math.pow(x, b)}")
 
 def main():
     while True:
